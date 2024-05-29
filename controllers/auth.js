@@ -6,6 +6,7 @@ const User = require("../models/user");
 const AppError = require("../utils/appError");
 // const sendEmail = require("../utils/email");
 const catchAsync = require("./../utils/catchAsync");
+const sendEmail = require("../utils/email");
 
 const signToken = (id) => {
   return jwt.sign({ id: id }, process.env.JWT_SECRET, {
@@ -86,7 +87,7 @@ exports.protect = catchAsync(async (req, res, next) => {
     req.headers.authorization.startsWith("Bearer")
   ) {
     token = req.headers.authorization.split(" ")[1];
-  } else if (req.cookies.jwt) {
+  } else if (req.cookies?.jwt) {
     token = req.cookies.jwt;
   }
 
@@ -210,7 +211,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
 
   // 3) Update changedPasswordAt property for the user
 
-  // 4) Log the use in, send JWT
+  // 4) Log the user in, send JWT
 
   createSendToken(user, 200, res);
 });

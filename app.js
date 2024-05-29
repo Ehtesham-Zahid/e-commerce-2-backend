@@ -7,6 +7,7 @@ const xss = require("xss-clean");
 const helmet = require("helmet");
 const compression = require("compression");
 const cors = require("cors");
+const fileUpload = require("express-fileupload");
 
 const globalErrorHandler = require("./controllers/error");
 const productRoutes = require("./routes/product");
@@ -44,6 +45,12 @@ app.use(mongoSanitize());
 app.use(xss());
 
 app.use(compression());
+
+app.use(
+  fileUpload({
+    useTempFiles: true,
+  })
+);
 
 // Google Auth
 

@@ -10,6 +10,7 @@ class AppError extends Error {
   }
 }
 
+module.exports = AppError;
 // This class makes an error object from the given data,
 // then the object is passed through the globalErrorHandler(error.js file in Controllers folder)
 //  and the eroor is send from there in response
@@ -22,5 +23,3 @@ class AppError extends Error {
 // 1) CatchAsync catch the error and send it to global error handler
 // 2) GlobalEH Handle the error according to its type and make a readable message for the user
 // 3) Then AppError class is used and an error object is created and then the object is send in response to user from the same GEH file
-
-module.exports = AppError;

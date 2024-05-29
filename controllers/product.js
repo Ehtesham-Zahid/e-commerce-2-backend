@@ -1,16 +1,56 @@
 const Product = require("../models/product");
 const catchAsync = require("./../utils/catchAsync");
+const cloudinary = require("cloudinary").v2;
+
+cloudinary.config({
+  cloud_name: "dcbjngmhn",
+  api_key: "665934251338653",
+  api_secret: "oIwQNFFVAD1zJI6OAIskq2ie8uk",
+});
 
 exports.createProduct = catchAsync(async (req, res, next) => {
   const { title, color, description, price, category } = req.body;
+
+  // Check if an image file is included in the request
+  let imgUrls = [];
+  if (req.files && req.files.img) {
+    try {
+      // Upload the images to Cloudinary
+      imgUrls = await Promise.all(
+        req.files.img.map(async (image) => {
+          return new Promise((resolve, reject) => {
+            cloudinary.uploader.upload(image.tempFilePath, (err, result) => {
+              if (err) {
+                console.error(err);
+                reject("Error uploading image to Cloudinary");
+              } else {
+                console.log(result);
+                resolve(result.url);
+              }
+            });
+          });
+        })
+      );
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: error.message });
+    }
+  }
+
+  // Create the product with uploaded image URLs
   const createdProduct = new Product({
     title,
     color,
+    imageUrls: imgUrls,
     description,
     price,
     category,
   });
+
+  // Save the product to the database
   await createdProduct.save();
+
+  // Send response
   res
     .status(201)
     .json({ createdProduct: createdProduct.toObject({ getters: true }) });
