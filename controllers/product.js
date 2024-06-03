@@ -66,6 +66,17 @@ exports.getAllProducts = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.getProductsByCategory = catchAsync(async (req, res, next) => {
+  const category = req.params.category;
+  const productsByCategory = await Product.find({ category });
+
+  res.json({
+    products: productsByCategory.map((product) =>
+      product.toObject({ getters: true })
+    ),
+  });
+});
+
 exports.getProduct = catchAsync(async (req, res, next) => {
   const { id } = req.params; // Assuming you're passing the product ID in the request parameters
   // Find the product by ID
@@ -113,9 +124,9 @@ exports.deleteProduct = catchAsync(async (req, res, next) => {
   res.json({ message: "Product deleted successfully" });
 });
 
-// Controller to get products of a specific category
-exports.getProductsByCategory = catchAsync(async (req, res) => {
-  const category = req.params.category;
-  const products = await Product.find({ category });
-  res.status(200).json(products);
-});
+// // Controller to get products of a specific category
+// exports.getProductsByCategory = catchAsync(async (req, res) => {
+//   const category = req.params.category;
+//   const products = await Product.find({ category });
+//   res.status(200).json(products);
+// });
