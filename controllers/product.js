@@ -9,13 +9,19 @@ cloudinary.config({
 });
 
 exports.createProduct = catchAsync(async (req, res, next) => {
-  const { title, color, description, price, category } = req.body;
+  const { title, description, price, category } = req.body;
+  let variations;
 
-  // Check if an image file is included in the request
+  try {
+    variations = JSON.parse(req.body.variations);
+  } catch (error) {
+    return res.status(400).json({ error: "Invalid variations format" });
+  }
+
+  // Handle image uploads
   let imgUrls = [];
   if (req.files && req.files.img) {
     try {
-      // Upload the images to Cloudinary
       imgUrls = await Promise.all(
         req.files.img.map(async (image) => {
           return new Promise((resolve, reject) => {
@@ -24,7 +30,6 @@ exports.createProduct = catchAsync(async (req, res, next) => {
                 console.error(err);
                 reject("Error uploading image to Cloudinary");
               } else {
-                console.log(result);
                 resolve(result.url);
               }
             });
@@ -37,24 +42,76 @@ exports.createProduct = catchAsync(async (req, res, next) => {
     }
   }
 
-  // Create the product with uploaded image URLs
+  // Construct variations with image URLs
+  const colorVariations = variations.map((variation, index) => ({
+    ...variation,
+    imageUrls: imgUrls[index] ? [imgUrls[index]] : [],
+  }));
+
+  // Create the product with variations
   const createdProduct = new Product({
     title,
-    color,
-    imageUrls: imgUrls,
-    description,
     price,
     category,
+    description,
+    variations: colorVariations,
   });
 
   // Save the product to the database
   await createdProduct.save();
 
-  // Send response
   res
     .status(201)
     .json({ createdProduct: createdProduct.toObject({ getters: true }) });
 });
+
+// exports.createProduct = catchAsync(async (req, res, next) => {
+//   const { title, color, description, price, category } = req.body;
+
+//   // Check if an image file is included in the request
+//   let imgUrls = [];
+//   if (req.files && req.files.img) {
+//     try {
+//       // Upload the images to Cloudinary
+//       imgUrls = await Promise.all(
+//         req.files.img.map(async (image) => {
+//           return new Promise((resolve, reject) => {
+//             cloudinary.uploader.upload(image.tempFilePath, (err, result) => {
+//               if (err) {
+//                 console.error(err);
+//                 reject("Error uploading image to Cloudinary");
+//               } else {
+//                 console.log(result);
+//                 resolve(result.url);
+//               }
+//             });
+//           });
+//         })
+//       );
+//     } catch (error) {
+//       console.error(error);
+//       return res.status(500).json({ error: error.message });
+//     }
+//   }
+
+//   // Create the product with uploaded image URLs
+//   const createdProduct = new Product({
+//     title,
+//     color,
+//     imageUrls: imgUrls,
+//     description,
+//     price,
+//     category,
+//   });
+
+//   // Save the product to the database
+//   await createdProduct.save();
+
+//   // Send response
+//   res
+//     .status(201)
+//     .json({ createdProduct: createdProduct.toObject({ getters: true }) });
+// });
 
 exports.getAllProducts = catchAsync(async (req, res, next) => {
   const allProducts = await Product.find({});
@@ -81,6 +138,21 @@ exports.getProduct = catchAsync(async (req, res, next) => {
   const { id } = req.params; // Assuming you're passing the product ID in the request parameters
   // Find the product by ID
   const product = await Product.findById(id);
+
+  if (!product) {
+    return res.status(404).json({ error: "Product not found" });
+  }
+
+  res.json(product);
+});
+
+exports.getProductByIdAndColor = catchAsync(async (req, res, next) => {
+  const { id, color } = req.params;
+
+  const product = await Product.findOne({
+    _id: id,
+    "variations.color": color,
+  });
 
   if (!product) {
     return res.status(404).json({ error: "Product not found" });

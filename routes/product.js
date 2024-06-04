@@ -6,9 +6,11 @@ const authControllers = require("../controllers/auth");
 
 router.get("/:id", productControllers.getProduct);
 
-router.get("/", productControllers.getAllProducts);
-
 router.get("/category/:category", productControllers.getProductsByCategory);
+
+router.get("/:id/:color", productControllers.getProductByIdAndColor);
+
+router.get("/", productControllers.getAllProducts);
 
 router.post(
   "/",
