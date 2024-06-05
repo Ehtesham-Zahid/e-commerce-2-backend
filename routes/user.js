@@ -4,6 +4,10 @@ const router = express.Router();
 // const userControllers = require("../controllers/user");
 const authControllers = require("../controllers/auth");
 
+router.get("/country", (req, res) => {
+  res.json({ country: req.country });
+});
+
 router.post("/signup", authControllers.signup);
 router.post("/login", authControllers.login);
 

@@ -176,6 +176,7 @@ exports.getProductsByVariants = catchAsync(async (req, res, next) => {
     productsRequest.map(async (productReq) => {
       const [id, color] = productReq.product.split("/");
       const selectedSize = productReq.selectedSize;
+      const quantity = productReq.quantity;
 
       // Find the product by ID
       const product = await Product.findById(id);
@@ -194,16 +195,17 @@ exports.getProductsByVariants = catchAsync(async (req, res, next) => {
       }
 
       // Check for the selected size
-      const size = variant.sizes.find((size) => size.size === selectedSize);
+      // const size = variant.sizes.find((size) => size.size === selectedSize);
 
-      if (!size) {
-        return { id, color, selectedSize, error: "Size not found" };
-      }
+      // if (!size) {
+      //   return { id, color, selectedSize, error: "Size not found" };
+      // }
 
       return {
         ...product.toObject(),
         variations: [variant],
         selectedSize: selectedSize,
+        quantity,
         // stock: size.stock,
       };
     })
