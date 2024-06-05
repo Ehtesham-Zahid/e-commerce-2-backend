@@ -29,7 +29,7 @@ app.use(express.json({ limit: "10mb" }));
 // Limit requests from same IP
 
 const limiter = rateLimit({
-  max: 1000,
+  max: 10000,
   windowMs: 60 * 60 * 1000,
   message: "Too many requests from this IP, please try again in an hour",
 });

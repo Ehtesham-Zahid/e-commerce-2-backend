@@ -8,9 +8,11 @@ router.get("/:id", productControllers.getProduct);
 
 router.get("/category/:category", productControllers.getProductsByCategory);
 
-router.get("/:id/:color", productControllers.getProductByIdAndColor);
+router.get("/:id/:color", productControllers.getProductWithColorVariant);
 
 router.get("/", productControllers.getAllProducts);
+
+router.post("/variants", productControllers.getProductsByVariants);
 
 router.post(
   "/",

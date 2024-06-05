@@ -134,6 +134,84 @@ exports.getProductsByCategory = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.getProductWithColorVariant = catchAsync(async (req, res, next) => {
+  const { id, color } = req.params; // Assuming you're passing the product ID and color in the request parameters
+
+  // Find the product by ID
+  const product = await Product.findById(id);
+
+  if (!product) {
+    return res.status(404).json({ error: "Product not found" });
+  }
+
+  // Filter the product's variations to find the one that matches the specified color
+  const variant = product.variations.find(
+    (variation) => variation.color === color
+  );
+
+  if (!variant) {
+    return res.status(404).json({ error: "Color variant not found" });
+  }
+
+  // Create a new product object with only the matched variant
+  const productWithVariant = {
+    ...product.toObject(),
+    variations: [variant], // Only include the matched variant
+  };
+
+  res.json(productWithVariant);
+});
+
+// const catchAsync = require("./path/to/catchAsync");
+// const Product = require("./path/to/productModel"); // Adjust the path to your Product model
+
+exports.getProductsByVariants = catchAsync(async (req, res, next) => {
+  const productsRequest = req.body; // Assuming you are sending the array in the request body
+
+  if (!Array.isArray(productsRequest)) {
+    return res.status(400).json({ error: "Invalid request format" });
+  }
+
+  const productsResponse = await Promise.all(
+    productsRequest.map(async (productReq) => {
+      const [id, color] = productReq.product.split("/");
+      const selectedSize = productReq.selectedSize;
+
+      // Find the product by ID
+      const product = await Product.findById(id);
+
+      if (!product) {
+        return { id, color, error: "Product not found" };
+      }
+
+      // Find the specific color variant
+      const variant = product.variations.find(
+        (variation) => variation.color === color
+      );
+
+      if (!variant) {
+        return { id, color, error: "Color variant not found" };
+      }
+
+      // Check for the selected size
+      const size = variant.sizes.find((size) => size.size === selectedSize);
+
+      if (!size) {
+        return { id, color, selectedSize, error: "Size not found" };
+      }
+
+      return {
+        ...product.toObject(),
+        variations: [variant],
+        selectedSize: selectedSize,
+        // stock: size.stock,
+      };
+    })
+  );
+
+  res.json(productsResponse);
+});
+
 exports.getProduct = catchAsync(async (req, res, next) => {
   const { id } = req.params; // Assuming you're passing the product ID in the request parameters
   // Find the product by ID
