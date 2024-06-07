@@ -123,9 +123,42 @@ exports.getAllProducts = catchAsync(async (req, res, next) => {
   });
 });
 
+// exports.getProductsByCategory = catchAsync(async (req, res, next) => {
+//   const category = req.params.category;
+//   const productsByCategory = await Product.find({ category });
+
+//   res.json({
+//     products: productsByCategory.map((product) =>
+//       product.toObject({ getters: true })
+//     ),
+//   });
+// });
+
 exports.getProductsByCategory = catchAsync(async (req, res, next) => {
   const category = req.params.category;
-  const productsByCategory = await Product.find({ category });
+  const { sort } = req.query;
+
+  console.log({ category, sort });
+
+  let sortOption;
+  switch (sort) {
+    case "price-low-to-high":
+      sortOption = { price: 1 }; // Ascending order
+      break;
+    case "price-high-to-low":
+      sortOption = { price: -1 }; // Descending order
+      break;
+    case "alphabetically-A-Z":
+      sortOption = { title: 1 }; // Ascending order
+      break;
+    case "alphabetically-Z-A":
+      sortOption = { title: -1 }; // Descending order
+      break;
+    default:
+      sortOption = {}; // No sorting
+  }
+
+  const productsByCategory = await Product.find({ category }).sort(sortOption);
 
   res.json({
     products: productsByCategory.map((product) =>
@@ -165,6 +198,55 @@ exports.getProductWithColorVariant = catchAsync(async (req, res, next) => {
 // const catchAsync = require("./path/to/catchAsync");
 // const Product = require("./path/to/productModel"); // Adjust the path to your Product model
 
+// exports.getProductsByVariants = catchAsync(async (req, res, next) => {
+//   const productsRequest = req.body; // Assuming you are sending the array in the request body
+
+//   if (!Array.isArray(productsRequest)) {
+//     return res.status(400).json({ error: "Invalid request format" });
+//   }
+
+//   const productsResponse = await Promise.all(
+//     productsRequest.map(async (productReq) => {
+//       const [id, color] = productReq.product.split("/");
+//       const selectedSize = productReq.selectedSize;
+//       const quantity = productReq.quantity;
+
+//       // Find the product by ID
+//       const product = await Product.findById(id);
+
+//       if (!product) {
+//         return { id, color, error: "Product not found" };
+//       }
+
+//       // Find the specific color variant
+//       const variant = product.variations.find(
+//         (variation) => variation.color === color
+//       );
+
+//       if (!variant) {
+//         return { id, color, error: "Color variant not found" };
+//       }
+
+//       // Check for the selected size
+//       // const size = variant.sizes.find((size) => size.size === selectedSize);
+
+//       // if (!size) {
+//       //   return { id, color, selectedSize, error: "Size not found" };
+//       // }
+
+//       return {
+//         ...product.toObject(),
+//         variations: [variant],
+//         selectedSize: selectedSize,
+//         quantity: quantity,
+//         // stock: size.stock,
+//       };
+//     })
+//   );
+
+//   res.json(productsResponse);
+// });
+
 exports.getProductsByVariants = catchAsync(async (req, res, next) => {
   const productsRequest = req.body; // Assuming you are sending the array in the request body
 
@@ -201,17 +283,29 @@ exports.getProductsByVariants = catchAsync(async (req, res, next) => {
       //   return { id, color, selectedSize, error: "Size not found" };
       // }
 
+      // Calculate the price of the product based on the quantity
+      const productPrice = product.price * quantity; // Assuming `product.price` is the price per unit
+
       return {
         ...product.toObject(),
         variations: [variant],
         selectedSize: selectedSize,
-        quantity,
+        quantity: quantity,
+        productPrice: productPrice,
         // stock: size.stock,
       };
     })
   );
 
-  res.json(productsResponse);
+  // Calculate the total price of all products
+  const totalPrice = productsResponse.reduce((total, product) => {
+    if (product.error) {
+      return total; // Skip products with errors
+    }
+    return total + product.productPrice;
+  }, 0);
+
+  res.json({ products: productsResponse, totalPrice });
 });
 
 exports.getProduct = catchAsync(async (req, res, next) => {
