@@ -14,6 +14,7 @@ const geoip = require("geoip-lite");
 const globalErrorHandler = require("./controllers/error");
 const productRoutes = require("./routes/product");
 const userRoutes = require("./routes/user");
+const addressRoutes = require("./routes/address");
 
 const AppError = require("./utils/appError");
 
@@ -75,6 +76,7 @@ app.use((req, res, next) => {
 
 // 2) ROUTES
 
+app.use("/api/v1/addresses", addressRoutes);
 app.use("/api/v1/products", productRoutes);
 app.use("/api/v1/users", userRoutes);
 
