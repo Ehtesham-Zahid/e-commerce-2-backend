@@ -1,5 +1,7 @@
 // controllers/order.js
 
+// MAKE TWO SEPARATE CONTROLLERS ONE FOR AUTH AND ONEOR UNAUTH
+
 const Order = require("../models/order");
 const catchAsync = require("../utils/catchAsync");
 
