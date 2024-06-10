@@ -15,6 +15,7 @@ const globalErrorHandler = require("./controllers/error");
 const productRoutes = require("./routes/product");
 const userRoutes = require("./routes/user");
 const addressRoutes = require("./routes/address");
+const orderRoutes = require("./routes/order");
 
 const AppError = require("./utils/appError");
 
@@ -78,6 +79,7 @@ app.use((req, res, next) => {
 
 app.use("/api/v1/addresses", addressRoutes);
 app.use("/api/v1/products", productRoutes);
+app.use("/api/v1/orders", orderRoutes);
 app.use("/api/v1/users", userRoutes);
 
 app.all("*", (req, res, next) => {
