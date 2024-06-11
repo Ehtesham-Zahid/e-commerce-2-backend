@@ -14,6 +14,11 @@ router.get(
   authControllers.protect,
   addressControllers.getPrimaryAddress
 );
+router.get(
+  "/:addressId",
+  authControllers.protect,
+  addressControllers.getAddress
+);
 
 // Add a new address
 router.post("/", authControllers.protect, addressControllers.addAddress);

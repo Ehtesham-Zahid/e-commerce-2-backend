@@ -21,6 +21,16 @@ exports.getPrimaryAddress = catchAsync(async (req, res, next) => {
   res.json(primaryAddress);
 });
 
+exports.getAddress = catchAsync(async (req, res, next) => {
+  const address = await Address.findById(req.params.addressId);
+
+  if (!address) {
+    return res.status(404).json({ error: "Address not found" });
+  }
+
+  res.json(address);
+});
+
 exports.addAddress = catchAsync(async (req, res, next) => {
   const { firstName, lastName, phoneNumber, city, address, zipcode, country } =
     req.body;

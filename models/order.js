@@ -15,6 +15,7 @@ const orderSchema = new Schema({
     // required: false,
   },
   addressDetails: {
+    email: String,
     firstName: String,
     lastName: String,
     phoneNumber: String,
@@ -22,18 +23,19 @@ const orderSchema = new Schema({
     address: String,
     zipcode: String,
     country: String,
+
     // required: false,
   },
   paymentMethod: {
     type: String,
     required: true,
   },
-  items: [
-    {
-      productId: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
-      quantity: Number,
-    },
-  ],
+  // items: [
+  //   {
+  //     product: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
+  //     quantity: Number,
+  //   },
+  // ],
   status: {
     type: String,
     default: "Pending",

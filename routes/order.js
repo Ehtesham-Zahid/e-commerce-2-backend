@@ -4,7 +4,13 @@ const router = express.Router();
 const orderControllers = require("../controllers/order");
 const authControllers = require("../controllers/auth");
 
-router.post("/", orderControllers.createOrder);
+router.post(
+  "/createOrderAuth",
+  authControllers.protect,
+  orderControllers.createOrderAuth
+);
+
+router.post("/createOrderUnAuth", orderControllers.createOrderUnAuth);
 
 router.get("/", authControllers.protect, orderControllers.getOrders);
 
