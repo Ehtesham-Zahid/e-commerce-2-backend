@@ -65,54 +65,6 @@ exports.createProduct = catchAsync(async (req, res, next) => {
     .json({ createdProduct: createdProduct.toObject({ getters: true }) });
 });
 
-// exports.createProduct = catchAsync(async (req, res, next) => {
-//   const { title, color, description, price, category } = req.body;
-
-//   // Check if an image file is included in the request
-//   let imgUrls = [];
-//   if (req.files && req.files.img) {
-//     try {
-//       // Upload the images to Cloudinary
-//       imgUrls = await Promise.all(
-//         req.files.img.map(async (image) => {
-//           return new Promise((resolve, reject) => {
-//             cloudinary.uploader.upload(image.tempFilePath, (err, result) => {
-//               if (err) {
-//                 console.error(err);
-//                 reject("Error uploading image to Cloudinary");
-//               } else {
-//                 console.log(result);
-//                 resolve(result.url);
-//               }
-//             });
-//           });
-//         })
-//       );
-//     } catch (error) {
-//       console.error(error);
-//       return res.status(500).json({ error: error.message });
-//     }
-//   }
-
-//   // Create the product with uploaded image URLs
-//   const createdProduct = new Product({
-//     title,
-//     color,
-//     imageUrls: imgUrls,
-//     description,
-//     price,
-//     category,
-//   });
-
-//   // Save the product to the database
-//   await createdProduct.save();
-
-//   // Send response
-//   res
-//     .status(201)
-//     .json({ createdProduct: createdProduct.toObject({ getters: true }) });
-// });
-
 exports.getAllProducts = catchAsync(async (req, res, next) => {
   const allProducts = await Product.find({});
 
@@ -123,22 +75,11 @@ exports.getAllProducts = catchAsync(async (req, res, next) => {
   });
 });
 
-// exports.getProductsByCategory = catchAsync(async (req, res, next) => {
-//   const category = req.params.category;
-//   const productsByCategory = await Product.find({ category });
-
-//   res.json({
-//     products: productsByCategory.map((product) =>
-//       product.toObject({ getters: true })
-//     ),
-//   });
-// });
-
 exports.getProductsByCategory = catchAsync(async (req, res, next) => {
   const category = req.params.category;
-  const { sort } = req.query;
+  const { sort, limit } = req.query;
 
-  console.log({ category, sort });
+  console.log({ category, sort, limit });
 
   let sortOption;
   switch (sort) {
@@ -158,7 +99,11 @@ exports.getProductsByCategory = catchAsync(async (req, res, next) => {
       sortOption = {}; // No sorting
   }
 
-  const productsByCategory = await Product.find({ category }).sort(sortOption);
+  const limitOption = parseInt(limit) || 20; // Default to 10 if limit is not specified
+
+  const productsByCategory = await Product.find({ category })
+    .sort(sortOption)
+    .limit(limitOption);
 
   res.json({
     products: productsByCategory.map((product) =>
@@ -194,58 +139,6 @@ exports.getProductWithColorVariant = catchAsync(async (req, res, next) => {
 
   res.json(productWithVariant);
 });
-
-// const catchAsync = require("./path/to/catchAsync");
-// const Product = require("./path/to/productModel"); // Adjust the path to your Product model
-
-// exports.getProductsByVariants = catchAsync(async (req, res, next) => {
-//   const productsRequest = req.body; // Assuming you are sending the array in the request body
-
-//   if (!Array.isArray(productsRequest)) {
-//     return res.status(400).json({ error: "Invalid request format" });
-//   }
-
-//   const productsResponse = await Promise.all(
-//     productsRequest.map(async (productReq) => {
-//       const [id, color] = productReq.product.split("/");
-//       const selectedSize = productReq.selectedSize;
-//       const quantity = productReq.quantity;
-
-//       // Find the product by ID
-//       const product = await Product.findById(id);
-
-//       if (!product) {
-//         return { id, color, error: "Product not found" };
-//       }
-
-//       // Find the specific color variant
-//       const variant = product.variations.find(
-//         (variation) => variation.color === color
-//       );
-
-//       if (!variant) {
-//         return { id, color, error: "Color variant not found" };
-//       }
-
-//       // Check for the selected size
-//       // const size = variant.sizes.find((size) => size.size === selectedSize);
-
-//       // if (!size) {
-//       //   return { id, color, selectedSize, error: "Size not found" };
-//       // }
-
-//       return {
-//         ...product.toObject(),
-//         variations: [variant],
-//         selectedSize: selectedSize,
-//         quantity: quantity,
-//         // stock: size.stock,
-//       };
-//     })
-//   );
-
-//   res.json(productsResponse);
-// });
 
 exports.getProductsByVariants = catchAsync(async (req, res, next) => {
   const productsRequest = req.body; // Assuming you are sending the array in the request body
@@ -369,10 +262,3 @@ exports.deleteProduct = catchAsync(async (req, res, next) => {
 
   res.json({ message: "Product deleted successfully" });
 });
-
-// // Controller to get products of a specific category
-// exports.getProductsByCategory = catchAsync(async (req, res) => {
-//   const category = req.params.category;
-//   const products = await Product.find({ category });
-//   res.status(200).json(products);
-// });
