@@ -16,12 +16,12 @@
 const mongoose = require("mongoose");
 
 const colorVariationSchema = new mongoose.Schema({
-  color: { type: String, required: true },
+  color: { type: String },
   imageUrls: [{ type: String, required: true }],
   sizes: [
     {
-      size: { type: String, required: true },
-      stock: { type: Number, required: true },
+      size: { type: String },
+      stock: { type: Number },
     },
   ],
 });
@@ -30,7 +30,7 @@ const productSchema = new mongoose.Schema({
   title: { type: String, required: true },
   price: { type: Number, required: true },
   category: { type: String, required: true },
-  description: { type: String, required: true },
+  description: { type: String },
   variations: [colorVariationSchema],
 });
 
