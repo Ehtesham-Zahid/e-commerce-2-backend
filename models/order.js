@@ -52,6 +52,24 @@ const orderSchema = new Schema({
     type: Date,
     default: Date.now,
   },
+  orderNumber: {
+    type: String,
+    unique: true,
+  },
+});
+
+// Function to generate random order number
+const generateOrderNumber = () => {
+  const randomNumber = Math.floor(Math.random() * 9000000) + 1000000;
+  return `#${randomNumber}`;
+};
+
+// Pre-save middleware to generate order number
+orderSchema.pre("save", function (next) {
+  if (!this.orderNumber) {
+    this.orderNumber = generateOrderNumber();
+  }
+  next();
 });
 
 module.exports = mongoose.model("Order", orderSchema);

@@ -11,7 +11,9 @@ const handleDuplicateFieldsDB = (err) => {
   for (const [key, value] of Object.entries(err.keyValue)) {
     values = `${key}: ${value}`;
   }
-  const message = `Duplicate field value: // ${values} //. Please use another value!`;
+  // const message = `Duplicate field value: // ${values} //. Please use another value!`;
+
+  const message = `// ${values} // already exists.`;
   return new AppError(message, 400);
 };
 
