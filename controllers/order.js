@@ -124,13 +124,3 @@ exports.getOrders = catchAsync(async (req, res, next) => {
     },
   });
 });
-
-exports.getOrders = catchAsync(async (req, res, next) => {
-  const orders = await Order.find().populate("user address");
-  res.status(200).json({
-    status: "success",
-    data: {
-      orders,
-    },
-  });
-});
