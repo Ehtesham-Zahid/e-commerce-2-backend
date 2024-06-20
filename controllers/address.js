@@ -35,9 +35,21 @@ exports.addAddress = catchAsync(async (req, res, next) => {
   const { firstName, lastName, phoneNumber, city, address, zipcode, country } =
     req.body;
 
+  let { isPrimary } = req.body;
+
   // If this is the first address, make it primary
   const existingAddresses = await Address.find({ user: req.user._id });
-  const isPrimary = existingAddresses.length === 0;
+  if (existingAddresses.length === 0) {
+    isPrimary = true;
+  }
+
+  if (isPrimary) {
+    // If the updated address is to be primary, unset previous primary address
+    await Address.updateMany(
+      { user: req.user._id, isPrimary: true },
+      { isPrimary: false }
+    );
+  }
 
   const newAddress = new Address({
     user: req.user._id,
