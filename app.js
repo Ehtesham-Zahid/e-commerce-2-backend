@@ -9,7 +9,7 @@ const compression = require("compression");
 const cors = require("cors");
 const fileUpload = require("express-fileupload");
 // Example Express middleware to get user's country from IP address
-const geoip = require("geoip-lite");
+// const geoip = require("geoip-lite");
 
 const globalErrorHandler = require("./controllers/error");
 const productRoutes = require("./routes/product");
@@ -56,25 +56,23 @@ app.use(
   })
 );
 
-// GETTING COUNTRY BY IP ADDRESS
-app.use((req, res, next) => {
-  // For testing purposes, set a mock IP address
-  // const mockIpAddress = "192.168.1.1";
-  const ip = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
-  const geo = geoip.lookup(ip);
-  console.log("GEO", geo);
-  // req.country = geo ? geo.country : "Unknown";
+// // GETTING COUNTRY BY IP ADDRESS
+// app.use((req, res, next) => {
+//   // For testing purposes, set a mock IP address
+//   // const mockIpAddress = "192.168.1.1";
+//   const ip = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
+//   const geo = geoip.lookup(ip);
+//   console.log("GEO", geo);
+//   // req.country = geo ? geo.country : "Unknown";
 
-  // // For testing purposes, set a mock country
-  // const mockCountry = "Mockland";
+//   // // For testing purposes, set a mock country
+//   // const mockCountry = "Mockland";
 
-  // // Set the mock country as the user's country
-  // req.country = geo ? geo.country : mockCountry;
+//   // // Set the mock country as the user's country
+//   // req.country = geo ? geo.country : mockCountry;
 
-  next();
-});
-
-// Google Auth
+//   next();
+// });
 
 // 2) ROUTES
 
