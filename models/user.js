@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const crypto = require("crypto");
 const Schema = mongoose.Schema;
 const bcrypt = require("bcryptjs");
-const validator = require("validator");
+// const validator = require("validator");
 
 const userSchema = new Schema({
   username: {
@@ -15,7 +15,7 @@ const userSchema = new Schema({
     required: [true, "Please provide your email"],
     unique: true,
     lowercase: true,
-    validate: [validator.isEmail, "Please provide a valid email"],
+    // validate: [validator.isEmail, "Please provide a valid email"],
   },
 
   role: { type: String, enum: ["user", "admin"], default: "user" },
@@ -97,11 +97,14 @@ userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
 
 userSchema.methods.createPasswordResetToken = function () {
   const resetToken = crypto.randomBytes(32).toString("hex");
+  console.log("1 WITHOUT HASH CREATED", resetToken);
 
   this.passwordResetToken = crypto
     .createHash("sha256")
     .update(resetToken)
     .digest("hex");
+
+  console.log("2 WITH  HASH CREATED", resetToken);
 
   this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
 
