@@ -34,18 +34,46 @@ router.get("/", authControllers.protect, orderControllers.getOrders);
 //     payment_method_types: ["card"],
 //     line_items: lineItems,
 //     mode: "payment",
-//     success_url: "http://localhost:5173/order-success",
-//     cancel_url: "http://localhost:5173/cancel",
+//     success_url: "https://e-commerce-2-frontend.vercel.app/order-success",
+//     cancel_url: "https://e-commerce-2-frontend.vercel.app/cancel",
 //   });
 
 //   res.json({ id: session.id });
 // });
 
-module.exports = router;
+// router.post("/create-checkout-session", async (req, res) => {
+//   const { products } = req.body;
+//   console.log(products);
+//   const lineItems = products?.map((product) => ({
+//     price_data: {
+//       currency: "pkr",
+//       product_data: {
+//         name: product.title,
+//         images: [product.variations[0].imageUrls[0]],
+//       },
+//       unit_amount: product.price,
+//     },
+//     quantity: product.quantity,
+//   }));
+
+//   try {
+//     const session = await stripe.checkout.sessions.create({
+//       payment_method_types: ["card"],
+//       line_items: lineItems,
+//       mode: "payment",
+//       success_url: "https://e-commerce-2-frontend.vercel.app/order-success",
+//       cancel_url: "https://e-commerce-2-frontend.vercel.app/order-cancel",
+//     });
+
+//     res.json({ id: session.id });
+//   } catch (error) {
+//     console.error("Error creating checkout session:", error);
+//     res.status(500).json({ error: "Internal Server Error" });
+//   }
+// });
 
 router.post("/create-checkout-session", async (req, res) => {
   const { products } = req.body;
-  console.log(products);
   const lineItems = products?.map((product) => ({
     price_data: {
       currency: "pkr",
@@ -53,7 +81,7 @@ router.post("/create-checkout-session", async (req, res) => {
         name: product.title,
         images: [product.variations[0].imageUrls[0]],
       },
-      unit_amount: product.price,
+      unit_amount: product.price * 100,
     },
     quantity: product.quantity,
   }));
@@ -63,8 +91,9 @@ router.post("/create-checkout-session", async (req, res) => {
       payment_method_types: ["card"],
       line_items: lineItems,
       mode: "payment",
-      success_url: "http://localhost:5173/order-success",
-      cancel_url: "http://localhost:5173/cancel",
+      success_url:
+        "https://e-commerce-2-frontend.vercel.app/order-success?session_id={CHECKOUT_SESSION_ID}",
+      cancel_url: "https://e-commerce-2-frontend.vercel.app/order-cancel",
     });
 
     res.json({ id: session.id });

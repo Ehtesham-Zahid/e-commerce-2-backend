@@ -64,8 +64,16 @@ exports.createOrderAuth = catchAsync(async (req, res, next) => {
       .json({ error: "Address ID is required for logged-in users" });
   }
 
+  let paymentStatus;
+  if (paymentMethod === "Card") {
+    paymentStatus = "Fulfilled";
+  } else {
+    paymentStatus = "Pending";
+  }
+
   const orderData = {
     paymentMethod,
+    paymentStatus,
     items,
     totalPrice,
     user: req.user._id,
@@ -96,8 +104,16 @@ exports.createOrderUnAuth = catchAsync(async (req, res, next) => {
     });
   }
 
+  let paymentStatus;
+  if (paymentMethod === "Card") {
+    paymentStatus = "Fulfilled";
+  } else {
+    paymentStatus = "Pending";
+  }
+
   const orderData = {
     paymentMethod,
+    paymentStatus,
     // items,
     totalPrice,
     addressDetails,
