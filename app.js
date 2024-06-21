@@ -59,17 +59,18 @@ app.use(
 // GETTING COUNTRY BY IP ADDRESS
 app.use((req, res, next) => {
   // For testing purposes, set a mock IP address
-  const mockIpAddress = "192.168.1.1";
-  // const ip = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
-  const geo = geoip.lookup(mockIpAddress);
+  // const mockIpAddress = "192.168.1.1";
+  const ip = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
+  const geo = geoip.lookup(ip);
   console.log("GEO", geo);
   // req.country = geo ? geo.country : "Unknown";
 
-  // For testing purposes, set a mock country
-  const mockCountry = "Mockland";
+  // // For testing purposes, set a mock country
+  // const mockCountry = "Mockland";
 
-  // Set the mock country as the user's country
-  req.country = geo ? geo.country : mockCountry;
+  // // Set the mock country as the user's country
+  // req.country = geo ? geo.country : mockCountry;
+
   next();
 });
 
