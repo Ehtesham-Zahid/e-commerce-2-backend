@@ -151,7 +151,8 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   // 3) Send password reset email to the user's email address
 
   // RESETURL
-  const resetURL = `${req.protocol}://e-commerce-2-frontend.vercel.app/account/reset-password/${resetToken}`;
+
+  const resetURL = `https://e-commerce-2-frontend.vercel.app/account/reset-password/${resetToken}`;
 
   const message = `Forgot your password? Submit a PATCH request with your new password and passwordConfirm to: ${resetURL} .\nIf you didn't forget your password, please ignore this email!`;
 
