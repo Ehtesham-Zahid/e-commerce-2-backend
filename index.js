@@ -13,11 +13,6 @@ const app = require("./app");
 
 const DB = process.env.DATABASE;
 
-// const DB = process.env.DATABASE.replace(
-//   "<PASSWORD>",
-//   process.env.DATABASE_PASSWORD
-// );
-
 // CONNECT DATABASE
 mongoose
   .connect(DB)

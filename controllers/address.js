@@ -67,26 +67,6 @@ exports.addAddress = catchAsync(async (req, res, next) => {
   res.status(201).json(createdAddress);
 });
 
-// exports.updateAddress = catchAsync(async (req, res, next) => {
-//   const { id } = req.params;
-//   const address = await Address.findById(id);
-
-//   if (!address) {
-//     return res.status(404).json({ error: "Address not found" });
-//   }
-
-//   address.firstName = req.body.firstName || address.firstName;
-//   address.lastName = req.body.lastName || address.lastName;
-//   address.address = req.body.address || address.address;
-//   address.city = req.body.city || address.city;
-//   address.phoneNumber = req.body.phoneNumber || address.phoneNumber;
-//   address.zipcode = req.body.zipcode || address.zipcode;
-//   address.country = req.body.country || address.country;
-
-//   const updatedAddress = await address.save();
-//   res.json(updatedAddress);
-// });
-
 exports.updateAddress = catchAsync(async (req, res, next) => {
   const { id } = req.params;
   const address = await Address.findById(id);
@@ -110,24 +90,11 @@ exports.updateAddress = catchAsync(async (req, res, next) => {
       { isPrimary: false }
     );
     address.isPrimary = true;
-    console.log("MAIN CHAL GAYA");
   }
 
   const updatedAddress = await address.save();
   res.json(updatedAddress);
 });
-
-// exports.deleteAddress = catchAsync(async (req, res, next) => {
-//   const { id } = req.params;
-//   const address = await Address.findById(id);
-
-//   if (!address) {
-//     return res.status(404).json({ error: "Address not found" });
-//   }
-
-//   await Address.findByIdAndDelete(id);
-//   res.json({ message: "Address removed successfully" });
-// });
 
 exports.deleteAddress = catchAsync(async (req, res, next) => {
   const { id } = req.params;

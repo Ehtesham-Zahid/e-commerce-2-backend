@@ -5,7 +5,7 @@ const cloudinary = require("cloudinary").v2;
 cloudinary.config({
   cloud_name: "dcbjngmhn",
   api_key: "665934251338653",
-  api_secret: "oIwQNFFVAD1zJI6OAIskq2ie8uk",
+  api_secret: process.env.CLOUDINARY_SECRET,
 });
 
 exports.createProduct = catchAsync(async (req, res, next) => {
@@ -78,8 +78,6 @@ exports.getAllProducts = catchAsync(async (req, res, next) => {
 exports.getProductsByCategory = catchAsync(async (req, res, next) => {
   const category = req.params.category;
   const { sort, limit } = req.query;
-
-  console.log({ category, sort, limit });
 
   let sortOption;
   switch (sort) {
@@ -169,13 +167,6 @@ exports.getProductsByVariants = catchAsync(async (req, res, next) => {
         return { id, color, error: "Color variant not found" };
       }
 
-      // Check for the selected size
-      // const size = variant.sizes.find((size) => size.size === selectedSize);
-
-      // if (!size) {
-      //   return { id, color, selectedSize, error: "Size not found" };
-      // }
-
       // Calculate the price of the product based on the quantity
       const productPrice = product.price * quantity; // Assuming `product.price` is the price per unit
 
@@ -185,7 +176,6 @@ exports.getProductsByVariants = catchAsync(async (req, res, next) => {
         selectedSize: selectedSize,
         quantity: quantity,
         productPrice: productPrice,
-        // stock: size.stock,
       };
     })
   );

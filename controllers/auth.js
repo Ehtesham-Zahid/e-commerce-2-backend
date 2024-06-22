@@ -4,7 +4,6 @@ const jwt = require("jsonwebtoken");
 
 const User = require("../models/user");
 const AppError = require("../utils/appError");
-// const sendEmail = require("../utils/email");
 const catchAsync = require("./../utils/catchAsync");
 const sendEmail = require("../utils/email");
 
@@ -146,16 +145,10 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   // 2) Generate the random reset token
 
   const resetToken = user.createPasswordResetToken();
-  console.log("Generated Reset Token:", resetToken);
-  console.log("Hashed Reset Token:", user.passwordResetToken);
 
   await user.save({ validateBeforeSave: false });
 
   // 3) Send password reset email to the user's email address
-
-  // const resetURL = `${req.protocol}://${req.get(
-  //   "host"
-  // )}/api/users/resetPassword/${resetToken}`;
 
   // RESETURL
   const resetURL = `${req.protocol}://localhost:5173/account/reset-password/${resetToken}`;
@@ -193,16 +186,12 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
     .update(req.params.token)
     .digest("hex");
 
-  console.log("Received Hashed Token:", hashedToken);
-
   // Find the user with the provided token and check if the token is valid and not expired
 
   const user = await User.findOne({
     passwordResetToken: hashedToken,
     passwordResetExpires: { $gt: Date.now() },
   });
-
-  console.log("User Found:", user);
 
   // 2) If token has not expired, and there is user, set the new password
   if (!user) {

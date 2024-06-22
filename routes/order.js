@@ -16,62 +16,6 @@ router.post("/createOrderUnAuth", orderControllers.createOrderUnAuth);
 
 router.get("/", authControllers.protect, orderControllers.getOrders);
 
-// router.post("/create-checkout-session", async (req, res) => {
-//   const { products } = req.body;
-//   console.log(products);
-//   const lineItems = products?.map((product) => ({
-//     price_data: {
-//       currency: "pkr",
-//       product_data: {
-//         name: product.title,
-//         images: [product.variations[0].imageUrls[0]],
-//       },
-//       unit_amount: product.price,
-//     },
-//     quantity: product.quantity,
-//   }));
-//   const session = await stripe.checkout.sessions.create({
-//     payment_method_types: ["card"],
-//     line_items: lineItems,
-//     mode: "payment",
-//     success_url: "https://e-commerce-2-frontend.vercel.app/order-success",
-//     cancel_url: "https://e-commerce-2-frontend.vercel.app/cancel",
-//   });
-
-//   res.json({ id: session.id });
-// });
-
-// router.post("/create-checkout-session", async (req, res) => {
-//   const { products } = req.body;
-//   console.log(products);
-//   const lineItems = products?.map((product) => ({
-//     price_data: {
-//       currency: "pkr",
-//       product_data: {
-//         name: product.title,
-//         images: [product.variations[0].imageUrls[0]],
-//       },
-//       unit_amount: product.price,
-//     },
-//     quantity: product.quantity,
-//   }));
-
-//   try {
-//     const session = await stripe.checkout.sessions.create({
-//       payment_method_types: ["card"],
-//       line_items: lineItems,
-//       mode: "payment",
-//       success_url: "https://e-commerce-2-frontend.vercel.app/order-success",
-//       cancel_url: "https://e-commerce-2-frontend.vercel.app/order-cancel",
-//     });
-
-//     res.json({ id: session.id });
-//   } catch (error) {
-//     console.error("Error creating checkout session:", error);
-//     res.status(500).json({ error: "Internal Server Error" });
-//   }
-// });
-
 router.post("/create-checkout-session", async (req, res) => {
   const { products } = req.body;
   const lineItems = products?.map((product) => ({

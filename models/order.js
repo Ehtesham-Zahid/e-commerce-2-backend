@@ -1,5 +1,3 @@
-// models/order.js
-
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
@@ -7,12 +5,10 @@ const orderSchema = new Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    // required: false,
   },
   address: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Address",
-    // required: false,
   },
   addressDetails: {
     email: String,
@@ -23,19 +19,12 @@ const orderSchema = new Schema({
     address: String,
     zipcode: String,
     country: String,
-
-    // required: false,
   },
   paymentMethod: {
     type: String,
     required: true,
   },
-  // items: [
-  //   {
-  //     product: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
-  //     quantity: Number,
-  //   },
-  // ],
+
   status: {
     type: String,
     default: "Pending",
